@@ -1,5 +1,0 @@
-{
-  "name": "vercel-spotify-callback",
-  "private": true,
-  "description": "HTTPS redirect page for Spotify OAuth → mobile app deep link"
-}
