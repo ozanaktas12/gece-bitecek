@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 import 'package:suggestune/spotify/spotify_auth.dart';
+import 'package:suggestune/spotify/spotify_session.dart';
+import 'package:suggestune/ui/home_shell.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,19 +22,92 @@ class SuggestuneApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const HomePage(),
+      home: const BootPage(),
     );
   }
 }
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class BootPage extends StatefulWidget {
+  const BootPage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<BootPage> createState() => _BootPageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _BootPageState extends State<BootPage> {
+  final SpotifySession _session = SpotifySession();
+  Future<bool>? _signedInFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _signedInFuture = _checkSignedIn();
+  }
+
+  Future<bool> _checkSignedIn() async {
+    try {
+      final token = await _session.getValidAccessToken();
+      return token != null;
+    } catch (_) {
+      await _session.signOut();
+      return false;
+    }
+  }
+
+  Future<void> _onSignedIn() async {
+    setState(() {
+      _signedInFuture = _checkSignedIn();
+    });
+  }
+
+  Future<void> _onSignOut() async {
+    await _session.signOut();
+    setState(() {
+      _signedInFuture = Future.value(false);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<bool>(
+      future: _signedInFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState != ConnectionState.done) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
+        final signedIn = snapshot.data ?? false;
+        if (!signedIn) {
+          return LoginPage(
+            session: _session,
+            onSuccess: _onSignedIn,
+          );
+        }
+        return HomeShell(
+          session: _session,
+          onSignOut: _onSignOut,
+        );
+      },
+    );
+  }
+}
+
+class LoginPage extends StatefulWidget {
+  const LoginPage({
+    super.key,
+    required this.session,
+    required this.onSuccess,
+  });
+
+  final SpotifySession session;
+  final Future<void> Function() onSuccess;
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
   String? _status;
   bool _busy = false;
 
@@ -42,11 +118,8 @@ class _HomePageState extends State<HomePage> {
     });
     try {
       final tokens = await SpotifyAuth.signInWithPkce();
-      if (!mounted) return;
-      setState(() {
-        _status =
-            'Bağlandı. Access token uzunluğu: ${tokens.accessToken.length} karakter.';
-      });
+      await widget.session.saveFromSignIn(tokens);
+      await widget.onSuccess();
     } on SpotifyAuthException catch (e) {
       if (!mounted) return;
       setState(() => _status = e.message);

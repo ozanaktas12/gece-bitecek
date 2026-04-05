@@ -36,6 +36,10 @@ dependencies:
   flutter_web_auth_2: ^4.1.0
   crypto: ^3.0.6
   http: ^1.2.2
+  appinio_swiper: ^2.1.1
+  url_launcher: ^6.3.2
+  flutter_secure_storage: ^10.0.0
+  shared_preferences: ^2.5.3
 
 dev_dependencies:
   flutter_test:
@@ -61,6 +65,7 @@ flutter:
 
   assets:
     - assets/env
+    - assets/suggestions_seed.json
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

@@ -112,6 +112,45 @@ class SpotifyAuth {
     );
   }
 
+  /// PKCE public client: [client_secret] is not sent.
+  /// See: https://developer.spotify.com/documentation/web-api/tutorials/refreshing-tokens
+  static Future<SpotifyTokens> refreshWithRefreshToken(String refreshToken) async {
+    final tokenUri = Uri.https(_authHost, _tokenPath);
+    final body = <String, String>{
+      'grant_type': 'refresh_token',
+      'refresh_token': refreshToken,
+      'client_id': _clientId,
+    };
+
+    final res = await http.post(
+      tokenUri,
+      headers: const {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: body,
+    );
+
+    if (res.statusCode != 200) {
+      throw SpotifyAuthException(
+        'Refresh failed (${res.statusCode}): ${res.body}',
+      );
+    }
+
+    final json = jsonDecode(res.body) as Map<String, dynamic>;
+    final access = json['access_token'] as String?;
+    final expiresIn = json['expires_in'] as int?;
+    final newRefresh = json['refresh_token'] as String?;
+    if (access == null || expiresIn == null) {
+      throw const SpotifyAuthException('Unexpected refresh response');
+    }
+
+    return SpotifyTokens(
+      accessToken: access,
+      refreshToken: newRefresh ?? refreshToken,
+      expiresIn: Duration(seconds: expiresIn),
+    );
+  }
+
   static String _randomState() {
     final b = List<int>.generate(16, (_) => Random.secure().nextInt(256));
     return base64UrlEncode(b).replaceAll('=', '');

@@ -1,4 +1,5 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:suggestune/main.dart';
@@ -7,6 +8,7 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   setUpAll(() async {
+    FlutterSecureStorage.setMockInitialValues({});
     await dotenv.load(fileName: 'assets/env');
   });
 
