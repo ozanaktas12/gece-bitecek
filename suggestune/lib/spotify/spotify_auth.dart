@@ -17,8 +17,10 @@ class SpotifyAuth {
   static const _callbackUrlScheme = 'suggestune';
 
   /// Minimum scopes; add more only when a feature needs them.
+  /// [user-read-private] helps Web API resolve market/catalog for the signed-in user.
   static const defaultScopes = <String>[
     'user-read-email',
+    'user-read-private',
   ];
 
   static String get _clientId {

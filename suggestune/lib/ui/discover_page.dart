@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:math';
+import 'dart:ui' as ui;
 
 import 'package:appinio_swiper/appinio_swiper.dart';
 import 'package:flutter/material.dart';
@@ -55,9 +56,13 @@ class _DiscoverPageState extends State<DiscoverPage> {
       ids.shuffle(Random());
       final batch = ids.take(20).toList();
 
+      final market =
+          ui.PlatformDispatcher.instance.locale.countryCode ?? 'US';
+
       final tracks = await SpotifyApi.getSeveralTracks(
         accessToken: token,
         ids: batch,
+        market: market,
       );
       if (!mounted) return;
       setState(() {
