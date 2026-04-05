@@ -23,3 +23,7 @@ Bu sayfa aynı query string ile uygulamayı açar:
 ### Test
 
 `https://xxx.vercel.app/spotify-callback?code=demo&state=test`
+
+### Not: Kök adres 404
+
+`/spotify-callback` çalışıyorsa kurulum doğrudur. Ana domain **kökü** (`/`) bazen boş kalabilir; Spotify için önemli olan yol **`/spotify-callback`**. Production URL’yi Vercel → **Deployments** → **Production** üzerindeki “Visit” ile doğrula (preview URL’leri farklı olabilir).

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>gece-bitecek</title>
+    <style>
+      body {
+        font-family: system-ui, sans-serif;
+        max-width: 40rem;
+        margin: 2rem auto;
+        padding: 0 1rem;
+        line-height: 1.5;
+      }
+      code {
+        word-break: break-all;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>gece-bitecek</h1>
+    <p>
+      Spotify OAuth dönüş adresi (Spotify Developer’da buna kayıt edilir):
+    </p>
+    <p><code id="cb"></code></p>
+    <p><a id="test" href="#">Test: callback sayfasını aç</a></p>
+    <script>
+      var base = window.location.origin;
+      var path = base + "/spotify-callback";
+      document.getElementById("cb").textContent = path;
+      document.getElementById("test").href = path + "?code=demo&state=test";
+    </script>
+  </body>
+</html>
