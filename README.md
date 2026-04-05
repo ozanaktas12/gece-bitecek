@@ -8,7 +8,7 @@ Spotify, girişten sonra tarayıcıyı şu adrese yönlendirir:
 
 Bu sayfa aynı query string ile uygulamayı açar:
 
-`gecebitecek://spotify-callback?code=...&state=...`
+`suggestune://spotify-callback?code=...&state=...`
 
 ### Yayınlama (Vercel)
 

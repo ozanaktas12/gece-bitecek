@@ -1,0 +1,4 @@
+# Copy values from Spotify Dashboard (never commit real secrets).
+# PKCE: Client Secret is NOT used in the mobile app.
+SPOTIFY_CLIENT_ID=
+SPOTIFY_REDIRECT_URI=
