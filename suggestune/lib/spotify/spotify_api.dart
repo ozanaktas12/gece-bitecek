@@ -19,8 +19,9 @@ class SpotifyApi {
     required List<String> ids,
     String? market,
   }) async {
-    if (ids.isEmpty) return [];
-    final futures = ids.map(
+    final valid = ids.map((e) => e.trim()).where(isValidTrackId).toList();
+    if (valid.isEmpty) return [];
+    final futures = valid.map(
       (id) => getTrack(
         accessToken: accessToken,
         id: id,
@@ -31,17 +32,27 @@ class SpotifyApi {
     return results.whereType<TrackCard>().toList();
   }
 
+  /// Spotify track IDs are base62, 22 chars (see Web API concepts).
+  static bool isValidTrackId(String id) {
+    final t = id.trim();
+    return t.length == 22 && RegExp(r'^[0-9A-Za-z]{22}$').hasMatch(t);
+  }
+
   /// GET /v1/tracks/{id}
   static Future<TrackCard?> getTrack({
     required String accessToken,
     required String id,
     String? market,
   }) async {
+    final cleanId = id.trim();
+    if (!isValidTrackId(cleanId)) {
+      return null;
+    }
     final params = <String, String>{};
     if (market != null && market.isNotEmpty) {
       params['market'] = market;
     }
-    final uri = Uri.https(_apiHost, '/v1/tracks/$id', params);
+    final uri = Uri.https(_apiHost, '/v1/tracks/$cleanId', params);
     final res = await http.get(
       uri,
       headers: {'Authorization': 'Bearer $accessToken'},
