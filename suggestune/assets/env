@@ -1,7 +1,6 @@
 # Spotify Developer → Uygulaman → Settings
 # Client ID: buraya yapıştır (Client Secret BU DOSYADA OLMAZ — PKCE ile gerekmez).
-SPOTIFY_CLIENT_ID=6b213486b891459bb40880945fbc182e
+SPOTIFY_CLIENT_ID=
 
 # Redirect URIs ile BİREBİR aynı olmalı (https, sonunda gereksiz / yok).
-# Production kullanıyorsan aynı listeye production URL’ini de ekle.
 SPOTIFY_REDIRECT_URI=https://gece-bitecek-git-main-ozan-aktas-projects.vercel.app/spotify-callback
