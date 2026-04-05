@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Spotify bağlantısı</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1.5rem;
+        text-align: center;
+        line-height: 1.5;
+      }
+      .card {
+        max-width: 22rem;
+      }
+      a {
+        color: inherit;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <p id="status">Spotify ile bağlantı tamamlanıyor…</p>
+      <p id="fallback" hidden>
+        Uygulama otomatik açılmadıysa
+        <a id="open-app" href="#">buraya dokun</a>.
+      </p>
+    </div>
+    <script>
+      (function () {
+        /**
+         * Flutter tarafında tanımladığın deep link şeması ile AYNI olmalı
+         * (ör. Android intent-filter, iOS CFBundleURLSchemes).
+         * Örnek: gecebitecek → gecebitecek://spotify-callback?...
+         */
+        var APP_SCHEME = "gecebitecek";
+
+        var path = "spotify-callback";
+        var params = new URLSearchParams(window.location.search);
+        var qs = params.toString();
+        var deepLink = APP_SCHEME + "://" + path + (qs ? "?" + qs : "");
+
+        var openApp = document.getElementById("open-app");
+        openApp.setAttribute("href", deepLink);
+
+        // Önce kullanıcı müdahalesi olmadan dene (çoğu cihazda çalışır)
+        window.location.replace(deepLink);
+
+        // Bazı tarayıcılar otomatik custom scheme’i bloklar; yedek link göster
+        setTimeout(function () {
+          document.getElementById("fallback").hidden = false;
+          document.getElementById("status").textContent =
+            "Uygulamaya dönmek için aşağıdaki bağlantıyı kullan.";
+        }, 1200);
+      })();
+    </script>
+  </body>
+</html>
